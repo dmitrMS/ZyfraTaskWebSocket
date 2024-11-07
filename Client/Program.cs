@@ -24,17 +24,15 @@ namespace WebSocketClient
                         await client.ConnectAsync(serverUri, cancellationToken);
                         Console.WriteLine("Подключено к серверу!");
 
-                        // Периодическая проверка доступности сервера
                         var receiveTask = ReceiveMessages(client, cancellationToken);
                         var keepAliveTask = SendPing(client, cancellationToken);
 
                         await Task.WhenAny(receiveTask, keepAliveTask);
 
-                        // Обработать разрыв связи
                         if (client.State != WebSocketState.Open)
                         {
                             Console.WriteLine("Соединение разорвано, попытка переподключения...");
-                            await Task.Delay(5000); // Задержка перед повторным подключением
+                            await Task.Delay(5000);
                         }
                     }
                     catch (Exception ex)
@@ -80,7 +78,6 @@ namespace WebSocketClient
             {
                 try
                 {
-                    // Отправка "пинг"-сообщения каждые 30 секунд
                     await Task.Delay(30000, cancellationToken);
 
                     if (client.State == WebSocketState.Open)
